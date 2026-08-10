@@ -35,6 +35,11 @@ export { UnconsciousSync, UnconsciousConfig, DEFAULT_UNCONSCIOUS_CONFIG,
          EmbeddedFrame, FrameFeatures, SimilarFrameResult, JEPAPrediction,
          frameToDescription, extractFeatures } from './unconscious-sync';
 
+// The Tap bridge — connects Hermes's perception to The Tap's living agents
+export { TapBridge, TapBridgeConfig, DEFAULT_TAP_BRIDGE_CONFIG,
+         TapReaction, TapQuery, HermesQueryResponse,
+         attachToCapture } from './tap-bridge';
+
 // Version
 export const VERSION = '1.0.0';
 
@@ -55,6 +60,8 @@ export async function createPerceptionStack(options?: {
   sounderSource?: 'display_capture' | 'ip_camera' | 'manual';
   embeddingEndpoint?: string;
   vectorStoreEndpoint?: string;
+  enableTapBridge?: boolean;
+  tapBridgeConfig?: Partial<import('./tap-bridge').TapBridgeConfig>;
 }) {
   const { PerceptionLog } = require('./perception-log');
   const { PerceptionCapture, DEFAULT_CAPTURE_CONFIG } = require('./capture');
@@ -91,5 +98,14 @@ export async function createPerceptionStack(options?: {
     },
   });
 
-  return { capture, log, detector, unconscious, midi };
+  // Optionally wire The Tap bridge
+  let tapBridge: import('./tap-bridge').TapBridge | null = null;
+  if (options?.enableTapBridge) {
+    const { TapBridge, attachToCapture } = require('./tap-bridge') as typeof import('./tap-bridge');
+    tapBridge = new TapBridge(options?.tapBridgeConfig);
+    await tapBridge.start();
+    attachToCapture(capture, tapBridge);
+  }
+
+  return { capture, log, detector, unconscious, midi, tapBridge };
 }
