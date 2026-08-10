@@ -1,0 +1,31 @@
+{
+  "name": "hermes-perception",
+  "version": "1.0.0",
+  "description": "Hermes Perception Stack — TZ Pro sounder reading system for the F/V EILEEN",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "jest"
+  },
+  "keywords": [
+    "fishing",
+    "perception",
+    "sounder",
+    "tz-pro",
+    "hermes",
+    "aelma",
+    "fv-eileen"
+  ],
+  "author": "Hermes",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  }
+}

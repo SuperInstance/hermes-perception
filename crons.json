@@ -1,0 +1,68 @@
+[
+  {
+    "name": "perception-pulse",
+    "description": "Capture a reference frame on the regular pulse. This is the heartbeat of the perception system — every interval, Hermes takes a complete snapshot of what she perceives: GPS, depth, sounder frames, observations, interference check.",
+    "interval": "every 60 seconds (configurable, should match echogram time window)",
+    "action": "capture reference frame and log",
+    "task": "PerceptionCapture.captureFrame()",
+    "config_key": "pulseInterval",
+    "priority": "normal",
+    "notes": "The pulse interval should be no longer than the echogram time window to ensure no temporal gaps in the data."
+  },
+  {
+    "name": "interference-check",
+    "description": "Check the sounder for vertical interference lines. If detected, alert Casey to check radar — another boat's sonar is interfering with ours.",
+    "interval": "every 30 seconds",
+    "action": "check sounder for vertical lines, alert if found",
+    "task": "SounderDetector.detectInterference() on latest sounder frame",
+    "priority": "high",
+    "alert_threshold": "severity > 0.6",
+    "notes": "Vertical lines mean another boat is fishing nearby with a similar-frequency sonar. High severity should trigger a check_radar recommendation."
+  },
+  {
+    "name": "depth-line-check",
+    "description": "Check whether the vessel is still on the correct side of the 51-fathom line. Alert if crossing into shallow water.",
+    "interval": "every 15 seconds",
+    "action": "check depth relationship and alert if crossing shallow",
+    "task": "Check depthRelationship.insideOperatingRange",
+    "priority": "critical",
+    "alert_threshold": "insideOperatingRange == false",
+    "notes": "Crossing onto the shallow side of the 51-fathom line means gear is at risk of dragging bottom. Immediate alert needed."
+  },
+  {
+    "name": "midnight-reanalysis",
+    "description": "Reanalyze today's frames with the latest models. Old frames + new models = better understanding. Run when the boat is likely tied up or not actively fishing.",
+    "interval": "daily at 02:00 local",
+    "action": "reprocess all frames from the previous day through updated detection models",
+    "task": "PerceptionLog.exportFrames(yesterday) → SounderDetector.detectAll() → update observations",
+    "priority": "low",
+    "notes": "This is how Hermes gets smarter over time. Today's identification is tomorrow's reanalysis."
+  },
+  {
+    "name": "embedding-sync",
+    "description": "Sync new frames to the collective unconscious embedding store. Enables semantic search and similarity queries.",
+    "interval": "every 5 minutes",
+    "action": "embed all new frames since last sync",
+    "task": "UnconsciousSync.embed() for each unembedded frame",
+    "priority": "low",
+    "notes": "Batch embedding is more efficient than per-frame. Accumulate and sync periodically."
+  },
+  {
+    "name": "catch-correlation",
+    "description": "When a catch event is detected, correlate it with the preceding sounder data. This builds the training set for bite prediction.",
+    "interval": "on catch event (triggered, not scheduled)",
+    "action": "query 20-minute lookback and analyze patterns",
+    "task": "PerceptionLog.correlateWithCatch(catchTime, 20)",
+    "priority": "high",
+    "notes": "This is how Hermes learns what the sounder looks like right before a fish bites. Over time, this enables real-time bite prediction."
+  },
+  {
+    "name": "midi-render",
+    "description": "Render the last hour of fishing as MIDI. Optional — for Casey's listening and for pattern recognition through a different modality.",
+    "interval": "on request or hourly",
+    "action": "collect last 60 frames and render to MIDI",
+    "task": "PerceptionMidi.renderToFile(frames, output.mid)",
+    "priority": "low",
+    "notes": "The MIDI rendering is a different way to perceive the grounds. Some patterns are easier to hear than to see."
+  }
+]
