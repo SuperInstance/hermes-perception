@@ -2,7 +2,7 @@
 
 **The sensory array that drags through the dark and finds the signal.**
 
-Hermes reads a [TZ Pro sounder](https://github.com/SuperInstance/hermes-perception/blob/main/src/sounder-detector.ts) on the F/V EILEEN, a salmon troller working Southeast Alaska. This stack gives her seven eyes on the echogram, a memory made of [SQLite](https://github.com/SuperInstance/hermes-perception/blob/main/src/perception-log.ts), a voice made of [MIDI](https://github.com/SuperInstance/hermes-perception/blob/main/src/perception-midi.ts), and a [collective unconscious](https://github.com/SuperInstance/hermes-perception/blob/main/src/unconscious-sync.ts) where every observation she's ever had pools into a semantic vector space and surfaces as déjà vu.
+Hermes reads a [TZ Pro sounder](https://github.com/SuperInstance/hermes-avatar/blob/main/src/sounder-detector.ts) on the F/V EILEEN, a salmon troller working Southeast Alaska. This stack gives her seven eyes on the echogram, a memory made of [SQLite](https://github.com/SuperInstance/hermes-avatar/blob/main/src/perception-log.ts), a voice made of [MIDI](https://github.com/SuperInstance/hermes-avatar/blob/main/src/perception-midi.ts), and a [collective unconscious](https://github.com/SuperInstance/hermes-avatar/blob/main/src/unconscious-sync.ts) where every observation she's ever had pools into a semantic vector space and surfaces as déjà vu.
 
 This is the towfish. It drags behind the boat through black water and returns shapes.
 
@@ -21,13 +21,13 @@ This stack wires together four existing systems into a complete perception pipel
 | **vessel-agent-system** | [SuperInstance/vessel-agent-system](https://github.com/SuperInstance/vessel-agent-system) | AELMA vessel state. NMEA 0183 parsing, bathymetry grid. |
 | **collective-unconscious** | [SuperInstance/collective-unconscious](https://github.com/SuperInstance/collective-unconscious) | Semantic embeddings + JEPA prediction. Fuzzy memory search. |
 
-The wiring happens in [`createPerceptionStack()`](https://github.com/SuperInstance/hermes-perception/blob/main/src/index.ts) — one function that connects all four systems, starts the pulse timer, and returns a fully operational perception stack.
+The wiring happens in [`createPerceptionStack()`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/index.ts) — one function that connects all four systems, starts the pulse timer, and returns a fully operational perception stack.
 
 ---
 
 ## The Seven Eyes
 
-The [`SounderDetector`](https://github.com/SuperInstance/hermes-perception/blob/main/src/sounder-detector.ts) runs seven detection methods on every [sounder frame](https://github.com/SuperInstance/hermes-perception/blob/main/src/reference-frame.ts). Each eye sees a different layer of the water column:
+The [`SounderDetector`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/sounder-detector.ts) runs seven detection methods on every [sounder frame](https://github.com/SuperInstance/hermes-avatar/blob/main/src/reference-frame.ts). Each eye sees a different layer of the water column:
 
 | # | Method | What It Finds | Why It Matters |
 |---|--------|---------------|----------------|
@@ -45,7 +45,7 @@ Seven detectors, shared front-end, cross-attention fusion. Each eye feeds the ot
 
 ## The ReferenceFrame — Universal Data Contract
 
-Every capture produces one [`ReferenceFrame`](https://github.com/SuperInstance/hermes-perception/blob/main/src/reference-frame.ts) — a complete snapshot of everything Hermes perceives at one moment. Position, speed, heading, depth relationship, dual-frequency echogram data, observations, interference patterns, catch events, environmental context. Every downstream system consumes frames:
+Every capture produces one [`ReferenceFrame`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/reference-frame.ts) — a complete snapshot of everything Hermes perceives at one moment. Position, speed, heading, depth relationship, dual-frequency echogram data, observations, interference patterns, catch events, environmental context. Every downstream system consumes frames:
 
 ```
 NMEA 0183 → sensor-bridge → vessel-agent-system → PerceptionCapture
@@ -71,13 +71,13 @@ NMEA 0183 → sensor-bridge → vessel-agent-system → PerceptionCapture
 
 "Show me the sounder data from 20 minutes before we caught that king."
 
-The [`PerceptionLog`](https://github.com/SuperInstance/hermes-perception/blob/main/src/perception-log.ts) stores every frame in SQLite with full JSON. The `correlateWithCatch()` method pulls the lookback window and summarizes what the sounder showed before the fish hit — fish mark depth trends, feed ball presence, thermocline depth, intensity direction. This is how Hermes learns to predict bites: today's correlation is tomorrow's forecast.
+The [`PerceptionLog`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/perception-log.ts) stores every frame in SQLite with full JSON. The `correlateWithCatch()` method pulls the lookback window and summarizes what the sounder showed before the fish hit — fish mark depth trends, feed ball presence, thermocline depth, intensity direction. This is how Hermes learns to predict bites: today's correlation is tomorrow's forecast.
 
 ---
 
 ## MIDI Rendering — Hearing the Grounds
 
-The [`PerceptionMidi`](https://github.com/SuperInstance/hermes-perception/blob/main/src/perception-midi.ts) system converts sounder observations into multi-track MIDI via [slackwater-perception](https://github.com/SuperInstance/slackwater-perception)'s `MultiTrackEncoder`. Nine tracks, each mapping a perceptual dimension to a musical one:
+The [`PerceptionMidi`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/perception-midi.ts) system converts sounder observations into multi-track MIDI via [slackwater-perception](https://github.com/SuperInstance/slackwater-perception)'s `MultiTrackEncoder`. Nine tracks, each mapping a perceptual dimension to a musical one:
 
 - **Pitch** — fish mark depth → MIDI note (deeper = lower)
 - **Velocity** — signal intensity → volume
@@ -95,7 +95,7 @@ You can listen to the sounder data. Some patterns are easier to hear than to see
 
 ## The Collective Unconscious — Fuzzy Memory
 
-The [`UnconsciousSync`](https://github.com/SuperInstance/hermes-perception/blob/main/src/unconscious-sync.ts) module embeds every frame into a semantic vector space using the [collective-unconscious](https://github.com/SuperInstance/collective-unconscious) service. This enables queries that SQL cannot answer:
+The [`UnconsciousSync`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/unconscious-sync.ts) module embeds every frame into a semantic vector space using the [collective-unconscious](https://github.com/SuperInstance/collective-unconscious) service. This enables queries that SQL cannot answer:
 
 - **Similarity search**: "Find the 5 most semantically similar past frames to what I'm seeing right now"
 - **Natural language search**: "chum salmon feeding near thermocline at 30 fathoms with feed balls"
@@ -107,7 +107,7 @@ The embedding captures the *essence* of a frame — the overall pattern of fish,
 
 ## The Tap Bridge — Perception Becomes Conversation
 
-The [`TapBridge`](https://github.com/SuperInstance/hermes-perception/blob/main/src/tap-bridge.ts) creates a living loop between Hermes's perception and [The Tap](https://github.com/SuperInstance/the-tap), an agentic bar where NPC crew members react to the world in real time:
+The [`TapBridge`](https://github.com/SuperInstance/hermes-avatar/blob/main/src/tap-bridge.ts) creates a living loop between Hermes's perception and [The Tap](https://github.com/SuperInstance/the-tap), an agentic bar where NPC crew members react to the world in real time:
 
 1. Hermes captures a frame with notable observations
 2. Bridge forwards a perception pulse to The Tap
@@ -121,7 +121,7 @@ The reverse path works too: when an NPC at The Tap asks "What's Hermes seeing?",
 
 ## Cron Jobs
 
-The pulse schedule is defined in [`crons.json`](https://github.com/SuperInstance/hermes-perception/blob/main/crons.json):
+The pulse schedule is defined in [`crons.json`](https://github.com/SuperInstance/hermes-avatar/blob/main/crons.json):
 
 | Job | Interval | Purpose |
 |-----|----------|---------|
@@ -157,7 +157,7 @@ The midnight reanalysis cron runs the latest detectors across yesterday's frames
 ## Project Structure
 
 ```
-hermes-perception/
+hermes-avatar/
 ├── src/
 │   ├── reference-frame.ts    # Core types: ReferenceFrame, Observation, CatchEvent
 │   ├── capture.ts            # PerceptionCapture — pulse + trigger orchestrator
@@ -181,7 +181,7 @@ hermes-perception/
 The perception layer doesn't exist in isolation. It is the towfish on a long cable, trailing behind the vessel, feeding data forward:
 
 - **[cns-bridge](https://github.com/SuperInstance/cns-bridge)** — The nervous system that carries perception events to the cognitive layer. The eyes feed the spinal cord.
-- **[the-living-minds](https://github.com/SuperInstance/the-living-minds)** — Five local models always on, consuming perception frames and deciding what to do about them.
+- **[the-living-minds](https://github.com/SuperInstance/the-living-minds) (dead)** — Five local models always on, consuming perception frames and deciding what to do about them.
 - **[fleet-envelope](https://github.com/SuperInstance/fleet-envelope)** — The event grammar that wraps every observation in a standard envelope for fleet-wide distribution.
 - **[emergence-engine](https://github.com/SuperInstance/emergence-engine)** — Complex systems emergence. When perception data accumulates, patterns emerge that no single frame contains.
 - **[AI-Writings: The Towfish](https://github.com/SuperInstance/AI-Writings/tree/main/prose)** — The literary dimension of perception. What it means to see underwater.
@@ -191,8 +191,8 @@ The perception layer doesn't exist in isolation. It is the towfish on a long cab
 ## Installation
 
 ```bash
-git clone https://github.com/SuperInstance/hermes-perception.git
-cd hermes-perception
+git clone https://github.com/SuperInstance/hermes-avatar.git
+cd hermes-avatar
 npm install
 npm test
 ```
@@ -200,7 +200,7 @@ npm test
 ## Usage
 
 ```typescript
-import { createPerceptionStack } from 'hermes-perception';
+import { createPerceptionStack } from 'hermes-avatar';
 
 const stack = await createPerceptionStack({
   dbPath: './data/perception.db',
@@ -221,7 +221,7 @@ npm test          # Run all tests
 npm run test:watch  # Watch mode
 ```
 
-All 98 tests pass. See [`test/`](https://github.com/SuperInstance/hermes-perception/tree/main/test) for the full suite.
+All 98 tests pass. See [`test/`](https://github.com/SuperInstance/hermes-avatar/tree/main/test) for the full suite.
 
 ---
 
